@@ -1,4 +1,8 @@
 from playwright.sync_api import sync_playwright #necessary library to implement the script
+import os
+from dotenv import load_dotenv #library to load environment variables from .env file
+from playwright._impl._errors import TargetClosedError
+load_dotenv() #load environment variables from .env file
 
 
 with sync_playwright() as p: #start the playwright
@@ -16,10 +20,8 @@ with sync_playwright() as p: #start the playwright
     page.wait_for_timeout(10000)
 
     #Fill in the login form
-    #user = d.velazquez521@gmail.com
-    #password = MelLesBab12!
-    page.fill("#ap_email", "d.velazquez521@gmail.com")
-    page.fill("#ap_password", "MelLesBab12!")
+    page.fill("#ap_email",os.getenv("GOODREADS_EMAIL") )
+    page.fill("#ap_password", os.getenv("GOODREADS_PASSWORD"))
     page.click("#signInSubmit") #click the login button
 
 
@@ -27,47 +29,78 @@ with sync_playwright() as p: #start the playwright
     # Check if the login was successful by looking for a specific element on the page   
 
     print("Logged in. Current page:", page.url)
-
+    if page.is_closed():
+        print("Page closed after login. Exiting.")
+        browser.close()
+        exit()
+    #loop twice for 30 entries (15 per page)
+    for i in range(2):
+        if page.is_closed():
+            print("Page closed before navigating to giveaway page. Exiting.")
+            browser.close()
+            exit()
     #navigate to the giveaway page
-    page.goto("https://www.goodreads.com/giveaway?sort=featured") 
-    page.wait_for_timeout(5000) #wait for 5 seconds to allow the page to load
+        try:
+            page.goto("https://www.goodreads.com/giveaway?sort=featured") 
+        except TargetClosedError:
+            print("Page closed while navigating to giveaway page. Exiting.")
+            browser.close()
+            exit()
+        page.wait_for_timeout(5000) #wait for 5 seconds to allow the page to load
 
     # Wait for giveaways to load
-    page.wait_for_selector("article.BookListItem")
+        page.wait_for_selector("article.BookListItem")
 
     # Get all giveaway entry URLs on the page
-    entry_links = page.eval_on_selector_all(
-        "article.BookListItem a.Button--primary",  # "Enter Giveaway" buttons
-        "elements => elements.map(el => el.href)"
-    )
+        entry_links = page.eval_on_selector_all(
+            "article.BookListItem a.Button--primary",  # "Enter Giveaway" buttons
+            "elements => elements.map(el => el.href)"
+        )
 
-    print(f" Found {len(entry_links)} giveaways to enter.")
+        print(f" Found {len(entry_links)} giveaways to enter.")
     
-    for link in entry_links:
-        print(f"👉 Visiting: {link}")
-        page.goto(link)  # Visit the giveaway page
+        for link in entry_links:
+            if page.is_closed():
+                print("Page closed before visiting giveaway link. Exiting.")
+                browser.close()
+                exit()
+            print(f"👉 Visiting: {link}")
+            try:
+                page.goto(link)  # Visit the giveaway page
+            except TargetClosedError:
+                print("Page closed while visiting giveaway link. Exiting.")
+                browser.close()
+                exit()
         
         
         
-        #giveway flow: click enter give away -> confirm address -> enter giveaway -> wait to simuluate humnan behavior
-        try:
-            if page.query_selector("a.addressLink"):
-                page.wait_for_timeout(5000)
-                page.wait_for_selector("a.addressLink")
-                page.click("a.addressLink")
-                page.wait_for_timeout(2000)
-                page.check('input#termsCheckBox')
-                page.click('input[type="submit"]')
-                giveaway_counter += 1
+            #giveway flow: click enter give away -> confirm address -> enter giveaway -> wait to simuluate humnan behavior
+            try:
+                if page.query_selector("a.addressLink"):
+                    page.wait_for_timeout(5000)
+                    page.wait_for_selector("a.addressLink")
+                    page.click("a.addressLink")
+                    page.wait_for_timeout(2000)
+                    page.check('input#termsCheckBox')
+                    page.click('input[type="submit"]')
+                    giveaway_counter += 1
                 
         
-        except Exception as e:
-            print("No address link found, skipping to next giveaway.")
-            pass
+            except Exception as e:
+                print("----Error occurred during giveaway entry.----")
+                print(f"Error details: {e}")
+                pass
 
+            print("Page Finished-------------------------------------")
+            print(f"Giveaways entered: {giveaway_counter}")
+            try:
+                page.wait_for_timeout(5000)
+            except TargetClosedError:
+                print("Page closed during final wait. Exiting.")
+                browser.close()
+                exit()
 
-        print(f"Giveaways entered: {giveaway_counter}")
-        page.wait_for_timeout(5000)
+    browser.close()
 
             
 
