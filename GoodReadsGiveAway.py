@@ -71,13 +71,24 @@ with sync_playwright() as p: #start the playwright
                 print("Page closed while visiting giveaway link. Exiting.")
                 browser.close()
                 exit()
+            except Exception as e:
+                print(f"Error navigating to giveaway link: {e}")
+                continue
         
         
-        
+            kindleCount =  page.locator('[alt*="Kindle"]').count()
+            print(f"Kindle giveaway: {kindleCount > 0}")
+
             #giveway flow: click enter give away -> confirm address -> enter giveaway -> wait to simuluate humnan behavior
             try:
-                if page.query_selector("a.addressLink"):
-                    page.wait_for_timeout(5000)
+                if kindleCount > 0:
+                    page.wait_for_timeout(2000)
+                    page.check('input#termsCheckBox')
+                    page.click('input[type="submit"]')
+                    giveaway_counter += 1
+
+                else:
+                    page.wait_for_timeout(2000)
                     page.wait_for_selector("a.addressLink")
                     page.click("a.addressLink")
                     page.wait_for_timeout(2000)
@@ -90,8 +101,6 @@ with sync_playwright() as p: #start the playwright
                 print("----Error occurred during giveaway entry.----")
                 print(f"Error details: {e}")
                 pass
-
-            print("Page Finished-------------------------------------")
             print(f"Giveaways entered: {giveaway_counter}")
             try:
                 page.wait_for_timeout(5000)
@@ -99,7 +108,7 @@ with sync_playwright() as p: #start the playwright
                 print("Page closed during final wait. Exiting.")
                 browser.close()
                 exit()
-
+    print("Page Finished-------------------------------------")
     browser.close()
 
             
