@@ -84,7 +84,7 @@ with sync_playwright() as p: #start the playwright
                 if kindleCount > 0:
                     page.wait_for_timeout(2000)
                     page.check('input#termsCheckBox')
-                    page.click('input[type="submit"]')
+                    page.click('input[type="submit"]')##<-- need to specify this part more bc it clashes with the amazon unlink button
                     giveaway_counter += 1
 
                 else:
