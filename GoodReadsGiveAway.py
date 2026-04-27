@@ -24,7 +24,7 @@ with sync_playwright() as p: #start the playwright
     page.fill("#ap_password", os.getenv("GOODREADS_PASSWORD"))
     page.click("#signInSubmit") #click the login button
 
-
+    page.wait_for_timeout(10000)
     page.wait_for_timeout(5000) #wait for 5 seconds to allow the page to load
     # Check if the login was successful by looking for a specific element on the page   
 
@@ -84,7 +84,7 @@ with sync_playwright() as p: #start the playwright
                 if kindleCount > 0:
                     page.wait_for_timeout(2000)
                     page.check('input#termsCheckBox')
-                    page.click('input[type="submit"]')##<-- need to specify this part more bc it clashes with the amazon unlink button
+                    page.click('input#giveawaySubmitButton') #scroll to the submit button and click it
                     giveaway_counter += 1
 
                 else:
