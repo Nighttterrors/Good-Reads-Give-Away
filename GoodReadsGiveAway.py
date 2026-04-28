@@ -7,7 +7,7 @@ load_dotenv() #load environment variables from .env file
 
 with sync_playwright() as p: #start the playwright
     giveaway_counter = 0 #initialize the giveaway counter
-    browser = p.chromium.launch(headless=False) #launch the browser in non-headless mode
+    browser = p.chromium.launch(headless=True) #launch the browser in non-headless mode
     page = browser.new_page() #create a new page in the browser
 
 
@@ -57,7 +57,7 @@ with sync_playwright() as p: #start the playwright
             "elements => elements.map(el => el.href)"
         )
 
-        print(f" Found {len(entry_links)} giveaways to enter.")
+        print(f" Found {2*len(entry_links)} giveaways to enter.")
     
         for link in entry_links:
             if page.is_closed():

@@ -1,9 +1,10 @@
-FROM mcr.microsoft.com/playwright/python:v1.42.0
+# Use official Playwright image (already has browsers + deps)
+FROM mcr.microsoft.com/playwright/python:v1.58.0-jammy
+
 WORKDIR /app
 
-COPY requirements.txt requirements.txt
+COPY . .
 
 RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
-RUN playwright install --with-deps
-CMD ["python", "GoodReadsGiveaway.py"]
+
+CMD ["python", "GoodReadsGiveAway.py"]
