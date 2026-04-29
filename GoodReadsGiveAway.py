@@ -7,7 +7,7 @@ load_dotenv() #load environment variables from .env file
 
 with sync_playwright() as p: #start the playwright
     giveaway_counter = 0 #initialize the giveaway counter
-    browser = p.chromium.launch(headless=True) #launch the browser in non-headless mode
+    browser = p.chromium.launch(headless=False) #launch the browser in non-headless mode
     page = browser.new_page() #create a new page in the browser
 
 
