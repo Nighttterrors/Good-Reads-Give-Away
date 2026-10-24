@@ -36,7 +36,7 @@ with sync_playwright() as p:  # start the playwright
         "[bold cyan]║       Goodreads Giveaway Bot Spinning Up     ║[/bold cyan]"
     )
     console.print(
-        "[bold cyan]╚══════════════════════════════════════════════╝[/bold cyan]"
+        "[bold cyan]╚══════════════════════════════════════════════`╝[/bold cyan]"
     )
     console.print()
 
@@ -187,6 +187,7 @@ with sync_playwright() as p:  # start the playwright
                         page.wait_for_timeout(2000)
                         page.check('input#termsCheckBox')
                         page.click('input#giveawaySubmitButton')
+                        page.check('input#ageAttestationCheckBox')
 
                         giveaway_counter += 1
 
@@ -202,6 +203,7 @@ with sync_playwright() as p:  # start the playwright
 
                         page.wait_for_timeout(2000)
                         page.check('input#termsCheckBox')
+                        page.check('input#ageAttestationCheckBox')
                         page.click('input[type="submit"]')
 
                         giveaway_counter += 1
@@ -244,9 +246,10 @@ with sync_playwright() as p:  # start the playwright
         "[bold green]╔══════════════════════════════════════════════╗[/bold green]"
     )
     console.print(
-        "[bold green]║              RUN COMPLETE ✓                 ║[/bold green]"
+        "[bold green]║              RUN COMPLETE ✓                  ║[/bold green]"
     )
     console.print(
+
         "[bold green]╚══════════════════════════════════════════════╝[/bold green]"
     )
 
