@@ -243,7 +243,7 @@ with sync_playwright() as p:  # start the playwright
     console.print()
 
     console.print(
-        "[bold green]╔══════════════════════════════════════════════╗[/bold green]"
+        "[bold grem en]╔══════════════════════════════════════════════╗[/bold green]"
     )
     console.print(
         "[bold green]║              RUN COMPLETE ✓                  ║[/bold green]"
